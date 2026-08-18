@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import {
-  BarChart3,
   CalendarDays,
   CheckSquare,
   LayoutDashboard,
@@ -25,26 +24,36 @@ export default function Sidebar({ mobileOpen, onClose }) {
   return (
     <>
       {mobileOpen && <div className="sidebar-overlay" onClick={onClose} />}
+
       <aside className={`sidebar ${mobileOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-brand">
           <div className="brand-mark">T</div>
+
           <div>
             <strong>TaskFlow</strong>
             <span>Task Manager</span>
           </div>
-          <button className="mobile-close" onClick={onClose} aria-label="Close menu">
+
+          <button
+            className="mobile-close"
+            onClick={onClose}
+            aria-label="Close menu"
+          >
             <X size={20} />
           </button>
         </div>
 
         <nav className="sidebar-nav">
           <p className="nav-label">WORKSPACE</p>
+
           {links.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               onClick={onClose}
-              className={({ isActive }) => `side-link ${isActive ? "active" : ""}`}
+              className={({ isActive }) =>
+                `side-link ${isActive ? "active" : ""}`
+              }
             >
               <Icon size={19} />
               <span>{label}</span>
@@ -54,12 +63,23 @@ export default function Sidebar({ mobileOpen, onClose }) {
 
         <div className="sidebar-bottom">
           <div className="mini-user">
-            <div className="avatar">{user?.name?.charAt(0)?.toUpperCase() || "U"}</div>
+            <div className="avatar">
+              {user?.profileImage ? (
+                <img
+                  src={user.profileImage}
+                  alt={user?.name || "Profile"}
+                />
+              ) : (
+                user?.name?.charAt(0)?.toUpperCase() || "U"
+              )}
+            </div>
+
             <div>
               <strong>{user?.name || "User"}</strong>
               <span>{user?.email || ""}</span>
             </div>
           </div>
+
           <button className="logout-btn" onClick={logout}>
             <LogOut size={18} />
             Logout

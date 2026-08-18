@@ -413,3 +413,233 @@ a { color: inherit; text-decoration: none; }
   .danger-panel { flex-direction:column; align-items:flex-start; }
   .danger-panel .btn-secondary { width:100%; }
 }
+
+
+
+
+/* =========================================
+   LIGHT MODE
+   ========================================= */
+
+html.light-mode {
+  background: #f5f7fb;
+}
+
+html.light-mode body {
+  background: #f5f7fb;
+  color: #172033;
+}
+
+/* Main application */
+html.light-mode .app {
+  background: #f5f7fb;
+  color: #172033;
+}
+
+/* Sidebar */
+html.light-mode .sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+}
+
+html.light-mode .sidebar a {
+  color: #64748b;
+}
+
+html.light-mode .sidebar a:hover,
+html.light-mode .sidebar a.active {
+  background: #f1f5f9;
+  color: #4f46e5;
+}
+
+/* Header */
+html.light-mode .topbar,
+html.light-mode header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Panels */
+html.light-mode .panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #172033;
+}
+
+/* Headings */
+html.light-mode h1,
+html.light-mode h2,
+html.light-mode h3,
+html.light-mode strong {
+  color: #172033;
+}
+
+/* Paragraphs */
+html.light-mode p {
+  color: #64748b;
+}
+
+/* Task cards */
+html.light-mode .task-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #172033;
+}
+
+html.light-mode .task-card h3 {
+  color: #172033;
+}
+
+html.light-mode .task-card p {
+  color: #64748b;
+}
+
+/* Search */
+html.light-mode .page-search {
+  background: #ffffff;
+  border: 1px solid #dfe3eb;
+}
+
+html.light-mode .page-search input {
+  background: transparent;
+  color: #172033;
+}
+
+html.light-mode .page-search input::placeholder {
+  color: #94a3b8;
+}
+
+/* Select */
+html.light-mode .filter-select {
+  background: #ffffff;
+  color: #172033;
+  border: 1px solid #dfe3eb;
+}
+
+/* Task tabs */
+html.light-mode .task-tabs button {
+  color: #64748b;
+}
+
+html.light-mode .task-tabs button.active {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+/* Settings */
+html.light-mode .settings-panel,
+html.light-mode .danger-panel {
+  background: #ffffff;
+  border-color: #e5e7eb;
+}
+
+html.light-mode .setting-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+html.light-mode .setting-copy strong {
+  color: #172033;
+}
+
+html.light-mode .setting-copy p {
+  color: #64748b;
+}
+
+/* Icons */
+html.light-mode .setting-icon {
+  background: #f1f5f9;
+  color: #4f46e5;
+}
+
+/* Buttons */
+html.light-mode .more-btn {
+  color: #64748b;
+}
+
+html.light-mode .more-btn:hover {
+  background: #f1f5f9;
+}
+
+/* Task menu */
+html.light-mode .task-menu {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+html.light-mode .task-menu button {
+  color: #334155;
+}
+
+html.light-mode .task-menu button:hover {
+  background: #f8fafc;
+}
+
+/* Empty state */
+html.light-mode .empty-state {
+  color: #64748b;
+}
+
+/* Toolbar */
+html.light-mode .tasks-toolbar {
+  color: #172033;
+}
+
+html.light-mode .tasks-summary {
+  color: #64748b;
+}
+
+/* Welcome banner */
+html.light-mode .welcome-banner {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+html.light-mode .welcome-banner h2 {
+  color: #172033;
+}
+
+html.light-mode .welcome-banner p {
+  color: #64748b;
+}
+
+/* Stat cards */
+html.light-mode .stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+/* Activity */
+html.light-mode .activity-item {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+html.light-mode .activity-item strong {
+  color: #172033;
+}
+
+html.light-mode .activity-item p {
+  color: #64748b;
+}
+
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  background: var(--primary-color);
+  color: white;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

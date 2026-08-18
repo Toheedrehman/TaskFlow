@@ -1,65 +1,86 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import api from "../services/api";
 
 const AuthContext = createContext(null);
-const STORAGE_KEY = "taskflow_user";
+
+const USER_KEY = "taskflow_user";
+const TOKEN_KEY = "taskflow_token";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
+      return JSON.parse(localStorage.getItem(USER_KEY)) || null;
     } catch {
       return null;
     }
   });
 
   useEffect(() => {
-    if (user) localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    else localStorage.removeItem(STORAGE_KEY);
+    if (user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(USER_KEY);
+    }
   }, [user]);
 
   const login = async (email, password) => {
-    // Frontend-only mode. Replace with API call when backend is connected.
-    const saved = JSON.parse(localStorage.getItem("taskflow_users") || "[]");
-    const found = saved.find(
-      (item) => item.email.toLowerCase() === email.toLowerCase() && item.password === password
-    );
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
-    if (!found) throw new Error("Invalid email or password.");
+    const { token, user } = response.data;
 
-    const safeUser = { id: found.id, name: found.name, email: found.email };
-    setUser(safeUser);
-    return safeUser;
+    localStorage.setItem(TOKEN_KEY, token);
+    setUser(user);
+
+    return user;
   };
 
   const register = async (name, email, password) => {
-    const saved = JSON.parse(localStorage.getItem("taskflow_users") || "[]");
-
-    if (saved.some((item) => item.email.toLowerCase() === email.toLowerCase())) {
-      throw new Error("An account with this email already exists.");
-    }
-
-    const newUser = {
-      id: crypto.randomUUID(),
+    const response = await api.post("/auth/register", {
       name,
       email,
-      password
-    };
+      password,
+    });
 
-    localStorage.setItem("taskflow_users", JSON.stringify([...saved, newUser]));
+    const { token, user } = response.data;
 
-    const safeUser = { id: newUser.id, name, email };
-    setUser(safeUser);
-    return safeUser;
+    localStorage.setItem(TOKEN_KEY, token);
+    setUser(user);
+
+    return user;
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+    setUser(null);
+  };
 
   const value = useMemo(
-    () => ({ user, login, register, logout, setUser }),
+    () => ({
+      user,
+      login,
+      register,
+      logout,
+      setUser,
+    }),
     [user]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
