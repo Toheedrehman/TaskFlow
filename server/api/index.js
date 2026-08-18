@@ -1,2 +1,3 @@
-// index.js
-// Task Manager project scaffold. Implementation will be added here.
+import app from "../server.js";
+
+export default app;
