@@ -14,9 +14,10 @@ dotenv.config();
 
 const app = express();
 
-// ===============================
+// =====================================
 // CORS
-// ===============================
+// =====================================
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
@@ -27,45 +28,56 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.log("Blocked CORS origin:", origin);
-        callback(null, false);
+        return callback(null, true);
       }
+
+      console.log("Blocked CORS origin:", origin);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
-// Explicitly handle preflight requests
-app.options("*", cors());
+// =====================================
+// MIDDLEWARE
+// =====================================
 
-// ===============================
-// Middleware
-// ===============================
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// ===============================
-// Health Check
-// ===============================
+// =====================================
+// HEALTH CHECK
+// =====================================
+
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "TaskFlow API is running",
   });
 });
 
-// ===============================
-// API Routes
-// ===============================
+// =====================================
+// ROUTES
+// =====================================
+
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// ===============================
-// 404 Handler
-// ===============================
+// =====================================
+// 404
+// =====================================
+
 app.use((req, res) => {
   res.status(404).json({
     message: "Route not found",
@@ -73,19 +85,77 @@ app.use((req, res) => {
   });
 });
 
-// ===============================
-// MongoDB
-// ===============================
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected successfully");
-  })
-  .catch((error) => {
-    console.error("MongoDB connection failed:", error);
-  });
+// =====================================
+// ERROR HANDLER
+// =====================================
 
-// ===============================
-// Export for Vercel
-// ===============================
-export default app;
+app.use((err, req, res, next) => {
+  console.error("ERROR:", err);
+
+  res.status(500).json({
+    message: "Internal server error",
+    error: err.message,
+  });
+});
+
+// =====================================
+// DATABASE
+// =====================================
+
+let mongoConnection;
+
+async function connectDB() {
+  if (mongoConnection) {
+    return mongoConnection;
+  }
+
+  if (!process.env.MONGO_URI) {
+    throw new Error("MONGO_URI environment variable is missing");
+  }
+
+  mongoConnection = mongoose.connect(process.env.MONGO_URI);
+
+  await mongoConnection;
+
+  console.log("MongoDB connected successfully");
+
+  return mongoConnection;
+}
+
+// =====================================
+// VERCEL SERVERLESS HANDLER
+// =====================================
+
+const handler = async (req, res) => {
+  try {
+    await connectDB();
+    return app(req, res);
+  } catch (error) {
+    console.error("Database/server error:", error);
+
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+// =====================================
+// LOCAL DEVELOPMENT
+// =====================================
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Failed to start server:", error);
+    });
+}
+
+export default handler;
