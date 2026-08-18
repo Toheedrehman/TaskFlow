@@ -26,22 +26,21 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without an origin
-      // such as Postman or server-to-server requests
-      if (!origin) {
-        return callback(null, true);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("Blocked CORS origin:", origin);
+        callback(null, false);
       }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      console.log("Blocked CORS origin:", origin);
-      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Explicitly handle preflight requests
+app.options("*", cors());
 
 // ===============================
 // Middleware
@@ -63,6 +62,16 @@ app.get("/", (req, res) => {
 // ===============================
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+
+// ===============================
+// 404 Handler
+// ===============================
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route not found",
+    path: req.originalUrl,
+  });
+});
 
 // ===============================
 // MongoDB
